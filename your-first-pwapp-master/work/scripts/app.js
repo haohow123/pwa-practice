@@ -51,8 +51,13 @@
     var key = selected.value;
     var label = selected.textContent;
     // TODO init the app.selectedCities array here
+    if (!app.selectedCities) {
+      app.selectedCities = [];
+    }
     app.getForecast(key, label);
     // TODO push the selected city to the array and save here
+    app.selectedCities.push({ key: key, label: label });
+    app.saveSelectedCities();
     app.toggleAddDialog(false);
   });
 
@@ -163,8 +168,7 @@
    */
   app.getForecast = function (key, label) {
     var statement = 'select * from weather.forecast where woeid=' + key;
-    var url = 'https://query.yahooapis.com/v1/public/yql?format=json&q=' +
-      statement;
+    var url = 'https://query.yahooapis.com/v1/public/yql?format=json&q=' + statement;
     // TODO add cache logic here
 
     // Fetch the latest data.
@@ -274,7 +278,7 @@
    */
   var initialWeatherForecast = {
     key: '2459115',
-    label: 'New York, NY',
+    label: 'New York, NY test',
     created: '2016-07-22T01:00:00Z',
     channel: {
       astronomy: {
@@ -320,6 +324,7 @@
    *   implications. It should not be used in production applications!
    *   Instead, check out IDB (https://www.npmjs.com/package/idb) or
    *   SimpleDB ((https://gist.github.com/inexorabletash/c8069c042b734519680c)
+   * 
    ***************************************************************************/
 
   app.selectedCities = localStorage.selectedCities;
@@ -343,4 +348,10 @@
   }
 
   // TODO add service worker code here
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(function () {
+        console.log('Service Worker Registered');
+      })
+  }
 })();
