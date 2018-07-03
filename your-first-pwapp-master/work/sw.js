@@ -36,7 +36,7 @@ self.addEventListener('activate', function (e) {
         caches.keys().then(function (keyList) {
             return Promise.all(keyList.map(function (key) {
                 if (key !== cacheName && key !== dataCacheName) {
-                    console.log('[ServiceWorker] Removing old cache', key);
+                    console.warn('[ServiceWorker] Removing old cache', key);
                     return caches.delete(key);
                 }
             }));
@@ -49,6 +49,7 @@ self.addEventListener('fetch', function (e) {
     console.log('[ServiceWorker] Fetch', e.request.url);
     var dataUrl = 'https://query.yahooapis.com/v1/public/yql';
     if (e.request.url.indexOf(dataUrl) > -1) {
+        console.log('service worker fetch');
         /*
          * When the request URL contains dataUrl, the app is asking for fresh
          * weather data. In this case, the service worker always goes to the
